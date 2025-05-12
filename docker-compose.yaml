@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - consultigo-network
+
+  backend:
+    build:
+      context: ./backend
+    volumes:
+      - ./backend/consultigo.db:/app/consultigo.db
+    ports:
+      - "8000:8000"
+    networks:
+      - consultigo-network
+    environment:
+      - DATABASE_URL=sqlite:///consultigo.db
+      - CORS_ORIGINS=http://localhost,http://frontend
+      - SECRET_KEY=your-secret-key-change-in-production
+      - ACCESS_TOKEN_EXPIRE_MINUTES=60
+
+networks:
+  consultigo-network:
+    driver: bridge 
