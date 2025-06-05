@@ -9,6 +9,10 @@ load_dotenv()
 # Get database URL from environment variable
 DATABASE_URL = os.getenv("DATABASE_URL")
 
+# Handle Render's DATABASE_URL format
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
 # Extract database name from URL
 # Format: postgresql://username:password@host:port/dbname
 db_name = DATABASE_URL.split("/")[-1]

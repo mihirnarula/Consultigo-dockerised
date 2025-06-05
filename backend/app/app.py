@@ -37,8 +37,13 @@ def read_root():
     return {"message": "Welcome to Consultigo API"}
 
 @app.get("/health")
-def health_check():
-    return {"status": "healthy"}
+def health_check(db: Session = Depends(database.get_db)):
+    try:
+        # Try to execute a simple query
+        db.execute("SELECT 1")
+        return {"status": "healthy", "database": "connected"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Database connection failed: {str(e)}")
 
 # Include routers
 app.include_router(auth.router)
