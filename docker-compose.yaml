@@ -15,17 +15,35 @@ services:
     build:
       context: ./backend
     volumes:
-      - ./backend/consultigo.db:/app/consultigo.db
+      - ./backend:/app
     ports:
       - "8000:8000"
+    depends_on:
+      - postgres
     networks:
       - consultigo-network
     environment:
-      - DATABASE_URL=sqlite:///consultigo.db
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/consultigo
       - CORS_ORIGINS=http://localhost,http://frontend
       - SECRET_KEY=your-secret-key-change-in-production
       - ACCESS_TOKEN_EXPIRE_MINUTES=60
 
+  postgres:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=consultigo
+    ports:
+      - "5432:5432"
+    networks:
+      - consultigo-network
+
 networks:
   consultigo-network:
-    driver: bridge 
+    driver: bridge
+
+volumes:
+  postgres_data: 
